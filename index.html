@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fazla Mesai Bildirim Formu</title>
+    <style>
+        :root {
+            --m5-circle-bg: #612d59;
+            --m5-dark: #431c3e;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            /* Vardiya Renkleri */
+            --color-ns: #00b050;
+            --color-na: #00b0f0;
+            --color-s:  #92d050;
+            --color-a:  #9bc2e6;
+            --color-g:  #f4b084;
+            --color-pink: #ff66ff;
+            --color-holiday: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .phone-wrapper {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin: auto;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .top-header {
+            background: linear-gradient(135deg, var(--m5-dark), var(--m5-circle-bg));
+            color: white;
+            padding: 22px 20px 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .m5-round-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--m5-circle-bg);
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 800;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+            letter-spacing: -1.5px;
+            user-select: none;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .m5-round-logo:active {
+            transform: scale(0.92);
+            opacity: 0.9;
+        }
+
+        .top-header h1 {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            margin: 0;
+        }
+
+        /* Sayfa Sekmeleri */
+        .tab-bar {
+            display: flex;
+            background-color: #f1f5f9;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 13px;
+            background: transparent;
+            border: none;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--m5-circle-bg);
+            border-bottom: 3px solid var(--m5-circle-bg);
+            background-color: #ffffff;
+        }
+
+        .content {
+            padding: 18px;
+        }
+
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--m5-circle-bg);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(97, 45, 89, 0.15);
+        }
+
+        /* Tatil Bilgi Rozeti */
+        .holiday-banner {
+            display: none;
+            background-color: #fef2f2;
+            border: 1.5px solid #fecaca;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            font-size: 12.5px;
+            color: #991b1b;
+            font-weight: 700;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .mode-btn {
+            border: none;
+            background: transparent;
+            padding: 11px;
+            font-size: 13.5px;
+            font-weight: 700;
+            border-radius: 9px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active-kismi {
+            background: #ffffff;
+            color: #1e293b;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .mode-btn.active-tam {
+            background: var(--color-pink);
+            color: #000000;
+            font-weight: 900;
+            box-shadow: 0 2px 8px rgba(255, 102, 255, 0.45);
+        }
+
+        .quick-shifts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .shift-chip {
+            border: 2px solid transparent;
+            background: #f8fafc;
+            padding: 11px 8px;
+            border-radius: 9px;
+            font-size: 12.5px;
+            cursor: pointer;
+            font-weight: 700;
+            text-align: center;
+            color: #475569;
+            transition: all 0.18s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .chip-ns  { border-color: var(--color-ns); color: #047857; }
+        .chip-na  { border-color: var(--color-na); color: #0284c7; }
+        .chip-s   { border-color: var(--color-s);  color: #4d7c0f; }
+        .chip-a   { border-color: var(--color-a);  color: #1e40af; }
+        .chip-g   { border-color: var(--color-g);  color: #c2410c; }
+
+        .chip-ns.active-kismi { background-color: var(--color-ns) !important; color: #ffffff !important; }
+        .chip-na.active-kismi { background-color: var(--color-na) !important; color: #ffffff !important; }
+        .chip-s.active-kismi  { background-color: var(--color-s)  !important; color: #1a2e05 !important; }
+        .chip-a.active-kismi  { background-color: var(--color-a)  !important; color: #0f172a !important; }
+        .chip-g.active-kismi  { background-color: var(--color-g)  !important; color: #431407 !important; }
+
+        .shift-chip.active-tam {
+            background-color: var(--color-pink) !important;
+            border-color: #e040e0 !important;
+            color: #000000 !important;
+            font-weight: 900 !important;
+            box-shadow: 0 3px 10px rgba(255, 102, 255, 0.5) !important;
+        }
+
+        .time-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .result-box {
+            background-color: #fdf4ff;
+            border: 1.5px dashed var(--m5-circle-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .result-box.tam-fm-box {
+            background-color: #fff0ff;
+            border-color: #e040e0;
+        }
+
+        .result-box.holiday-box {
+            background-color: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .result-label {
+            font-size: 11px;
+            color: var(--m5-circle-bg);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .result-val {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--m5-circle-bg);
+            margin-top: 2px;
+        }
+
+        .result-box.tam-fm-box .result-val {
+            color: #a21caf;
+        }
+        .result-box.holiday-box .result-val {
+            color: #b91c1c;
+        }
+
+        .preview-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.45;
+            color: #334155;
+            white-space: pre-wrap;
+            margin-bottom: 18px;
+        }
+
+        .btn-whatsapp {
+            width: 100%;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-whatsapp:active {
+            transform: scale(0.98);
+        }
+
+        /* 2. Sayfa: Aylık Görünüm ve Seçici */
+        .month-selector-bar {
+            margin-bottom: 14px;
+        }
+        .month-selector-bar select {
+            font-weight: 700;
+            color: var(--m5-circle-bg);
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, var(--m5-circle-bg), #8e2a82);
+            color: white;
+            padding: 18px;
+            border-radius: 14px;
+            text-align: center;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(97, 45, 89, 0.25);
+        }
+        .total-card-sub {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+        .total-card-val {
+            font-size: 26px;
+            font-weight: 900;
+            margin-top: 4px;
+        }
+
+        .history-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .history-count {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .btn-clear-month {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .history-left {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .history-date {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: #1e293b;
+        }
+        .history-times {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .history-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .history-fm {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--m5-circle-bg);
+            background: #fdf4ff;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .btn-del-item {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #94a3b8;
+            padding: 35px 10px;
+            font-size: 13px;
+        }
+
+        /* Gizlilik & Bilgilendirme Not Kutusu */
+        .info-note-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 11.5px;
+            color: #14532d;
+            line-height: 1.55;
+        }
+        .info-note-title {
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #166534;
+        }
+
+        /* TEK SEFERLİK BİLGİLENDİRME MODAL PENCERESİ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 9999;
+            backdrop-filter: blur(3px);
+        }
+        .modal-card {
+            background: #ffffff;
+            border-radius: 18px;
+            max-width: 380px;
+            width: 100%;
+            padding: 22px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
+            text-align: left;
+            animation: modalPop 0.25s ease-out;
+        }
+        @keyframes modalPop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-badge {
+            width: 44px;
+            height: 44px;
+            background: #f3e8ff;
+            color: var(--m5-circle-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 14px;
+        }
+        .modal-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .modal-body {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.55;
+            margin-bottom: 18px;
+        }
+        .modal-body ul {
+            margin-left: 18px;
+            margin-top: 8px;
+        }
+        .modal-body li {
+            margin-bottom: 4px;
+        }
+        .btn-modal-close {
+            width: 100%;
+            background-color: var(--m5-circle-bg);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .btn-modal-close:active {
+            opacity: 0.9;
+        }
+    
+        /* Soft & Silik İtalik Monogram İmza */
+        .header-monogram {
+            font-style: italic;
+            font-size: 11px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            margin-top: -4px;
+            user-select: none;
+        }
+
+        .footer-watermark {
+            text-align: center;
+            padding: 12px 0 16px;
+            font-style: italic;
+            font-size: 11px;
+            color: #94a3b8;
+            opacity: 0.35;
+            letter-spacing: 2.5px;
+            user-select: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- TEK SEFERLİK AÇILAN BİLGİLENDİRME PENCERESİ -->
+<div class="modal-overlay" id="welcomeModal">
+    <div class="modal-card">
+        <div class="modal-badge">📋</div>
+        <div class="modal-title">M5 Fazla Mesai Bildirim Formu</div>
+        <div class="modal-body">
+            Bu form, günlük fazla mesai bilgilerinizi hesaplayıp <strong>Kontrol Merkezi'ne WhatsApp üzerinden iletmenizi</strong> sağlar.
+            <ul>
+                <li><strong>Otomatik Hesaplama:</strong> Vardiyanıza veya Resmi Tatil durumuna göre mesainiz otomatik bulunur.</li>
+                <li><strong>Resmi Tatiller:</strong> Tam gün tatillerde tüm süre, arife günlerinde 13:00 sonrası otomatik FM sayılır.</li>
+                <li><strong>Aylık Takip:</strong> Bildirdiğiniz mesailer cihazınızda saklanır ve ay toplamınız hesaplanır.</li>
+                <li><strong>%100 Gizli & Güvenli:</strong> Bilgileriniz dış sunuculara gönderilmez, sadece telefonunuzda tutulur.</li>
+            </ul>
+            <div style="margin-top: 10px; padding: 8px 10px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; font-size: 12px; color: #475569;">
+                ⚠️ <em>Bu uygulamanın kullanım zorunluluğu yoktur. Herhangi bir hatayla karşılaştığınızda bildirirseniz sevinirim.</em>
+            </div>
+            <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; color: var(--m5-circle-bg);">İyi çalışmalar.</span>
+                <span style="font-style: italic; font-size: 13px; color: #94a3b8; opacity: 0.65; letter-spacing: 1.5px; font-weight: 500;">S.Ş.</span>
+            </div>
+        </div>
+        <button class="btn-modal-close" onclick="closeWelcomeModal()">Anladım, Başla</button>
+    </div>
+</div>
+
+<div class="phone-wrapper">
+    <div class="top-header">
+        <div class="m5-round-logo" onclick="window.openWelcomeModal()" title="Bilgilendirme">M5</div>
+        <h1>Fazla Mesai Bildirim Formu</h1>
+        <div class="header-monogram"></div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" id="tabBtnForm" onclick="switchTab('form')">Mesai Bildir</button>
+        <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">Aylık Geçmiş</button>
+    </div>
+
+    <!-- 1. Sekme -->
+    <div class="content page-view active" id="pageForm">
+        <div class="form-group">
+            <label for="empName">Personel Adı Soyadı</label>
+            <input type="text" id="empName" placeholder="Adınızı ve Soyadınızı Girin" oninput="calculate()">
+        </div>
+
+        <div class="form-group">
+            <label for="workDate">Tarih</label>
+            <input type="date" id="workDate" onchange="calculate()">
+        </div>
+
+        <!-- Tatil Bildirim Alanı -->
+        <div class="holiday-banner" id="holidayBanner">
+            <span id="holidayIcon">🇹🇷</span>
+            <span id="holidayText">Resmi Tatil</span>
+        </div>
+
+        <div class="form-group">
+            <label>Mesai Türü ve Vardiya</label>
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active-kismi" id="btnModeKismi" onclick="setMode('kismi')">
+                    Kısmi FM
+                </button>
+                <button type="button" class="mode-btn" id="btnModeTam" onclick="setMode('tam')">
+                    Normal FM
+                </button>
+            </div>
+
+            <div class="quick-shifts">
+                <span class="shift-chip chip-ns" data-code="NS" onclick="selectShift('NS')">NS (06:30-15:30)</span>
+                <span class="shift-chip chip-na" data-code="NA" onclick="selectShift('NA')">NA (13:00-22:00)</span>
+                <span class="shift-chip chip-s"  data-code="S"  onclick="selectShift('S')">S (05:00-14:00)</span>
+                <span class="shift-chip chip-a"  data-code="A"  onclick="selectShift('A')">A (16:00-01:00)</span>
+                <span class="shift-chip chip-g"  data-code="G"  style="grid-column: span 2;" onclick="selectShift('G')">G (22:00-06:00)</span>
+            </div>
+        </div>
+
+        <div class="time-row">
+            <div class="form-group">
+                <label for="inTime">Giriş Saati</label>
+                <input type="text" id="inTime" inputmode="numeric" placeholder="06:30" maxlength="5" oninput="formatTimeInput(this); calculate();">
+            </div>
+            <div class="form-group">
+                <label for="outTime">Çıkış Saati</label>
+                <input type="text" id="outTime" inputmode="numeric" placeholder="15:30" maxlength="5" oninput="formatTimeInput(this); calculate();">
+            </div>
+        </div>
+
+        <div class="result-box" id="resultBox">
+            <div class="result-label" id="resultTypeLabel">HESAPLANAN FAZLA MESAİ</div>
+            <div class="result-val" id="calculatedFmText">0 dk</div>
+        </div>
+
+        <label>WhatsApp Mesaj Önizlemesi</label>
+        <div class="preview-box" id="messagePreview"></div>
+
+        <button class="btn-whatsapp" onclick="sendToWhatsAppAndSave()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.532 1.77.814 2.797.815 3.179 0 5.767-2.587 5.768-5.766.002-3.18-2.585-5.768-5.769-5.768zm0 10.354c-.933 0-1.745-.262-2.483-.728l-.178-.112-1.84.483.491-1.794-.117-.187a4.57 4.57 0 01-.703-2.45c.001-2.529 2.059-4.588 4.83-4.588 2.528 0 4.587 2.059 4.586 4.588 0 2.529-2.059 4.588-4.589 4.588zm5.203-3.693c-.287-.144-1.696-.837-1.959-.933-.263-.096-.454-.144-.646.144-.191.288-.742.933-.909 1.124-.167.192-.335.216-.622.072-.287-.144-1.213-.447-2.311-1.427-.854-.762-1.43-1.703-1.598-1.99-.168-.288-.018-.444.126-.587.13-.13.288-.336.431-.504.144-.168.192-.288.288-.48.096-.192.048-.36-.024-.504-.072-.144-.646-1.558-.885-2.133-.233-.561-.47-.485-.646-.494l-.551-.01c-.191 0-.503.072-.766.36-.263.288-1.005.983-1.005 2.397 0 1.414 1.029 2.78 1.173 2.972.144.192 2.025 3.093 4.907 4.338.686.296 1.222.473 1.639.606.689.219 1.316.188 1.812.114.553-.083 1.696-.693 1.936-1.363.24-.67.24-1.245.168-1.363-.072-.118-.263-.19-.55-.334z"/>
+            </svg>
+            WhatsApp ile İlet & Kaydet
+        </button>
+    </div>
+
+    <!-- 2. Sekme: Aylık Görünüm ve Arşiv -->
+    <div class="content page-view" id="pageHistory">
+        <div class="month-selector-bar">
+            <label for="monthFilter">Görüntülenen Ay:</label>
+            <select id="monthFilter" onchange="renderHistory()"></select>
+        </div>
+
+        <div class="total-card">
+            <div class="total-card-sub" id="totalCardMonthLabel">BU AYIN TOPLAM FAZLA MESAİSİ</div>
+            <div class="total-card-val" id="grandTotalFm">0 saat 0 dk</div>
+        </div>
+
+        <div class="history-controls">
+            <span class="history-count" id="historyCount">0 Günlük Kayıt</span>
+            <button class="btn-clear-month" onclick="clearSelectedMonth()">Bu Ayı Temizle</button>
+        </div>
+
+        <div class="history-list" id="historyContainer"></div>
+
+        <div class="info-note-box">
+            <div class="info-note-title">🔒 Gizlilik & Çevrim Dışı Kullanım</div>
+            Bu form <strong>tamamen çevrim dışı (internetsiz)</strong> çalışır; girdiğiniz hiçbir veri dış sunuculara veya üçüncü şahıslara aktarılmaz ya da paylaşılmaz. Tüm kayıtlar yalnızca kendi cihazınızın yerel tarayıcı belleğinde tutulur.<br><br>
+            ⚠️ <em>Cihazınızda <strong>tarayıcı geçmişi/çerezleri temizlendiğinde</strong> veya form <strong>gizli sekmede</strong> kullanıldığında bu kayıtlar silinebilir. Düzenli takip için formu her zaman aynı tarayıcıda açmanız önerilir.</em>
+        </div>
+        <div class="footer-watermark"><em></em></div>
+</div>
+</div>
+
+<script>
+const TARGET_PHONE = "905498220260";
+
+const SHIFTS = {
+    "NS": { start: 6*60+30, end: 15*60+30, defIn: "06:30", defOut: "15:30" },
+    "NA": { start: 13*60, end: 22*60, defIn: "13:00", defOut: "22:00" },
+    "S":  { start: 5*60, end: 14*60, defIn: "05:00", defOut: "14:00" },
+    "A":  { start: 16*60, end: 25*60, defIn: "16:00", defOut: "01:00" },
+    "G":  { start: 22*60, end: 30*60, defIn: "22:00", defOut: "06:00" }
+};
+
+const MONTH_NAMES = [
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+];
+
+// TÜRKİYE RESMİ TATİLLERİ (Sabit ve Dini Bayramlar)
+const HOLIDAYS = {
+    "2024-01-01": { type: "FULL", name: "Yılbaşı" },
+    "2024-04-09": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
+    "2024-04-10": { type: "FULL", name: "Ramazan Bayramı 1. Gün" },
+    "2024-04-11": { type: "FULL", name: "Ramazan Bayramı 2. Gün" },
+    "2024-04-12": { type: "FULL", name: "Ramazan Bayramı 3. Gün" },
+    "2024-04-23": { type: "FULL", name: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı" },
+    "2024-05-01": { type: "FULL", name: "1 Mayıs Emek ve Dayanışma Günü" },
+    "2024-05-19": { type: "FULL", name: "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
+    "2024-06-15": { type: "HALF", name: "Kurban Bayramı Arifesi (13:00 Sonrası)" },
+    "2024-06-16": { type: "FULL", name: "Kurban Bayramı 1. Gün" },
+    "2024-06-17": { type: "FULL", name: "Kurban Bayramı 2. Gün" },
+    "2024-06-18": { type: "FULL", name: "Kurban Bayramı 3. Gün" },
+    "2024-06-19": { type: "FULL", name: "Kurban Bayramı 4. Gün" },
+    "2024-07-15": { type: "FULL", name: "15 Temmuz Demokrasi ve Milli Birlik Günü" },
+    "2024-08-30": { type: "FULL", name: "30 Ağustos Zafer Bayramı" },
+    "2024-10-28": { type: "HALF", name: "29 Ekim Cumhuriyet Bayramı Arifesi (13:00 Sonrası)" },
+    "2024-10-29": { type: "FULL", name: "29 Ekim Cumhuriyet Bayramı" },
+
+    "2025-01-01": { type: "FULL", name: "Yılbaşı" },
+    "2025-03-29": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
+    "2025-03-30": { type: "FULL", name: "Ramazan Bayramı 1. Gün" },
+    "2025-03-31": { type: "FULL", name: "Ramazan Bayramı 2. Gün" },
+    "2025-04-01": { type: "FULL", name: "Ramazan Bayramı 3. Gün" },
+    "2025-04-23": { type: "FULL", name: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı" },
+    "2025-05-01": { type: "FULL", name: "1 Mayıs Emek ve Dayanışma Günü" },
+    "2025-05-19": { type: "FULL", name: "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
+    "2025-06-05": { type: "HALF", name: "Kurban Bayramı Arifesi (13:00 Sonrası)" },
+    "2025-06-06": { type: "FULL", name: "Kurban Bayramı 1. Gün" },
+    "2025-06-07": { type: "FULL", name: "Kurban Bayramı 2. Gün" },
+    "2025-06-08": { type: "FULL", name: "Kurban Bayramı 3. Gün" },
+    "2025-06-09": { type: "FULL", name: "Kurban Bayramı 4. Gün" },
+    "2025-07-15": { type: "FULL", name: "15 Temmuz Demokrasi ve Milli Birlik Günü" },
+    "2025-08-30": { type: "FULL", name: "30 Ağustos Zafer Bayramı" },
+    "2025-10-28": { type: "HALF", name: "29 Ekim Cumhuriyet Bayramı Arifesi (13:00 Sonrası)" },
+    "2025-10-29": { type: "FULL", name: "29 Ekim Cumhuriyet Bayramı" },
+
+    "2026-01-01": { type: "FULL", name: "Yılbaşı" },
+    "2026-03-19": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
+    "2026-03-20": { type: "FULL", name: "Ramazan Bayramı 1. Gün" },
+    "2026-03-21": { type: "FULL", name: "Ramazan Bayramı 2. Gün" },
+    "2026-03-22": { type: "FULL", name: "Ramazan Bayramı 3. Gün" },
+    "2026-04-23": { type: "FULL", name: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı" },
+    "2026-05-01": { type: "FULL", name: "1 Mayıs Emek ve Dayanışma Günü" },
+    "2026-05-19": { type: "FULL", name: "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
+    "2026-05-26": { type: "HALF", name: "Kurban Bayramı Arifesi (13:00 Sonrası)" },
+    "2026-05-27": { type: "FULL", name: "Kurban Bayramı 1. Gün" },
+    "2026-05-28": { type: "FULL", name: "Kurban Bayramı 2. Gün" },
+    "2026-05-29": { type: "FULL", name: "Kurban Bayramı 3. Gün" },
+    "2026-05-30": { type: "FULL", name: "Kurban Bayramı 4. Gün" },
+    "2026-07-15": { type: "FULL", name: "15 Temmuz Demokrasi ve Milli Birlik Günü" },
+    "2026-08-30": { type: "FULL", name: "30 Ağustos Zafer Bayramı" },
+    "2026-10-28": { type: "HALF", name: "29 Ekim Cumhuriyet Bayramı Arifesi (13:00 Sonrası)" },
+    "2026-10-29": { type: "FULL", name: "29 Ekim Cumhuriyet Bayramı" },
+
+    "2027-01-01": { type: "FULL", name: "Yılbaşı" },
+    "2027-03-09": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
+    "2027-03-10": { type: "FULL", name: "Ramazan Bayramı 1. Gün" },
+    "2027-03-11": { type: "FULL", name: "Ramazan Bayramı 2. Gün" },
+    "2027-03-12": { type: "FULL", name: "Ramazan Bayramı 3. Gün" },
+    "2027-04-23": { type: "FULL", name: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı" },
+    "2027-05-01": { type: "FULL", name: "1 Mayıs Emek ve Dayanışma Günü" },
+    "2027-05-16": { type: "HALF", name: "Kurban Bayramı Arifesi (13:00 Sonrası)" },
+    "2027-05-17": { type: "FULL", name: "Kurban Bayramı 1. Gün" },
+    "2027-05-18": { type: "FULL", name: "Kurban Bayramı 2. Gün" },
+    "2027-05-19": { type: "FULL", name: "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
+    "2027-05-20": { type: "FULL", name: "Kurban Bayramı 4. Gün" },
+    "2027-07-15": { type: "FULL", name: "15 Temmuz Demokrasi ve Milli Birlik Günü" },
+    "2027-08-30": { type: "FULL", name: "30 Ağustos Zafer Bayramı" },
+    "2027-10-28": { type: "HALF", name: "29 Ekim Cumhuriyet Bayramı Arifesi (13:00 Sonrası)" },
+    "2027-10-29": { type: "FULL", name: "29 Ekim Cumhuriyet Bayramı" }
+};
+
+let currentMode = "kismi";
+let selectedBaseShift = "NS";
+
+function init() {
+    checkFirstVisit();
+
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('workDate').value = `${yyyy}-${mm}-${dd}`;
+
+    const savedName = localStorage.getItem("m5_worker_name");
+    if(savedName) document.getElementById('empName').value = savedName;
+
+    updateUI();
+    populateMonthFilter();
+    renderHistory();
+}
+
+window.openWelcomeModal = function() {
+    var m = document.getElementById('welcomeModal');
+    if (m) {
+        m.style.display = 'flex';
+    }
+};
+
+window.closeWelcomeModal = function() {
+    try {
+        localStorage.setItem("m5_welcome_seen", "true");
+    } catch(e) {}
+    var m = document.getElementById('welcomeModal');
+    if (m) {
+        m.style.display = 'none';
+    }
+};
+
+function checkFirstVisit() {
+    var hasSeenModal = false;
+    try {
+        hasSeenModal = localStorage.getItem("m5_welcome_seen");
+    } catch(e) {}
+    if (!hasSeenModal) {
+        window.openWelcomeModal();
+    }
+}
+
+function switchTab(tab) {
+    const tabBtnForm = document.getElementById('tabBtnForm');
+    const tabBtnHistory = document.getElementById('tabBtnHistory');
+    const pageForm = document.getElementById('pageForm');
+    const pageHistory = document.getElementById('pageHistory');
+
+    if(tab === 'form') {
+        tabBtnForm.classList.add('active');
+        tabBtnHistory.classList.remove('active');
+        pageForm.classList.add('active');
+        pageHistory.classList.remove('active');
+    } else {
+        tabBtnForm.classList.remove('active');
+        tabBtnHistory.classList.add('active');
+        pageForm.classList.remove('active');
+        pageHistory.classList.add('active');
+        populateMonthFilter();
+        renderHistory();
+    }
+}
+
+function setMode(mode) {
+    currentMode = mode;
+    const btnKismi = document.getElementById('btnModeKismi');
+    const btnTam = document.getElementById('btnModeTam');
+
+    if(mode === 'kismi') {
+        btnKismi.className = "mode-btn active-kismi";
+        btnTam.className = "mode-btn";
+        document.getElementById('resultBox').classList.remove('tam-fm-box');
+    } else {
+        btnKismi.className = "mode-btn";
+        btnTam.className = "mode-btn active-tam";
+        document.getElementById('resultBox').classList.add('tam-fm-box');
+    }
+    updateUI();
+}
+
+function selectShift(code) {
+    selectedBaseShift = code;
+    if(SHIFTS[code]) {
+        document.getElementById('inTime').value = SHIFTS[code].defIn;
+        document.getElementById('outTime').value = SHIFTS[code].defOut;
+    }
+    updateUI();
+}
+
+function updateUI() {
+    document.querySelectorAll('.shift-chip').forEach(chip => {
+        chip.classList.remove('active-kismi', 'active-tam');
+        if(chip.getAttribute('data-code') === selectedBaseShift) {
+            if(currentMode === 'kismi') {
+                chip.classList.add('active-kismi');
+            } else {
+                chip.classList.add('active-tam');
+            }
+        }
+    });
+
+    calculate();
+}
+
+function formatTimeInput(input) {
+    let v = input.value.replace(/[^0-9]/g, '');
+    if(v.length >= 3) {
+        input.value = v.substring(0, 2) + ':' + v.substring(2, 4);
+    }
+}
+
+function timeToMin(t) {
+    if(!t || !t.includes(':')) return null;
+    let [h, m] = t.split(':').map(Number);
+    if(isNaN(h) || isNaN(m)) return null;
+    return h * 60 + m;
+}
+
+function minToText(m) {
+    if(m <= 0) return "0 dk";
+    let h = Math.floor(m / 60);
+    let min = m % 60;
+    if(h > 0 && min > 0) return `${h} saat ${min} dk`;
+    if(h > 0) return `${h} saat`;
+    return `${min} dk`;
+}
+
+function calculate() {
+    const name = document.getElementById('empName').value.trim();
+    const dateVal = document.getElementById('workDate').value;
+    const inTime = document.getElementById('inTime').value.trim();
+    const outTime = document.getElementById('outTime').value.trim();
+
+    if(name) localStorage.setItem("m5_worker_name", name);
+
+    // Resmi Tatil Kontrolü
+    const holiday = HOLIDAYS[dateVal] || null;
+    const banner = document.getElementById('holidayBanner');
+    const resultBox = document.getElementById('resultBox');
+
+    if(holiday) {
+        banner.style.display = 'flex';
+        document.getElementById('holidayText').innerText = `${holiday.name} (${holiday.type === 'HALF' ? 'Yarım Gün - 13:00 Sonrası Tatil' : 'Tam Gün Resmi Tatil'})`;
+        resultBox.classList.add('holiday-box');
+    } else {
+        banner.style.display = 'none';
+        resultBox.classList.remove('holiday-box');
+    }
+
+    let finalCode = (currentMode === 'tam') ? ('F' + selectedBaseShift) : selectedBaseShift;
+
+    let fmMinutes = 0;
+    let inMin = timeToMin(inTime);
+    let outMin = timeToMin(outTime);
+
+    if(inMin !== null && outMin !== null) {
+        let adjOut = outMin < inMin ? (outMin + 1440) : outMin;
+        let totalWorked = adjOut - inMin;
+
+        // 1. TAM GÜN RESMİ TATİL DURUMU:
+        if(holiday && holiday.type === "FULL") {
+            // Tam gün resmi tatilde çalışılan sürenin tamamı fazla mesaidir
+            if(totalWorked > 240) {
+                fmMinutes = Math.max(0, totalWorked - 60); // 1 saat yemek düşülür
+            } else {
+                fmMinutes = totalWorked;
+            }
+            document.getElementById('resultTypeLabel').innerText = `🇹🇷 RESMİ TATİL MESAİSİ (${holiday.name.toUpperCase()})`;
+        }
+        // 2. YARIM GÜN RESMİ TATİL (ARİFE) DURUMU: Mesailer 13:00'dan sonra başlar!
+        else if(holiday && holiday.type === "HALF") {
+            let halfDayStart = 13 * 60; // 13:00
+            let holidayStartMin = Math.max(inMin, halfDayStart);
+
+            if(adjOut > holidayStartMin) {
+                let holidayWorked = adjOut - holidayStartMin;
+                // 13:00 öncesi için normal vardiya taşması varsa ekle
+                let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
+                let earlyStart = Math.max(0, base.start - inMin);
+
+                fmMinutes = holidayWorked + earlyStart;
+            } else {
+                // 13:00 öncesinde kalındıysa normal mesai farkı
+                let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
+                let early = Math.max(0, base.start - inMin);
+                fmMinutes = early;
+            }
+            document.getElementById('resultTypeLabel').innerText = `🌙 YARIM GÜN TATİL (13:00 SONRASI FM)`;
+        }
+        // 3. NORMAL GÜNLERDE NORMAL FM (TAM ÇALIŞMA):
+        else if(currentMode === 'tam') {
+            if(totalWorked > 240) {
+                fmMinutes = Math.max(0, totalWorked - 60); // 1 saat yemek düşülür
+            } else {
+                fmMinutes = totalWorked;
+            }
+            document.getElementById('resultTypeLabel').innerText = "HESAPLANAN NORMAL FM (1 SAAT YEMEK DÜŞÜLDÜ)";
+        }
+        // 4. NORMAL GÜNLERDE KISMİ FM (VARDİYA DIŞI TAŞMA):
+        else {
+            let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
+            let early = Math.max(0, base.start - inMin);
+            let late = Math.max(0, adjOut - base.end);
+            fmMinutes = early + late;
+            document.getElementById('resultTypeLabel').innerText = "HESAPLANAN KISMİ FM";
+        }
+    }
+
+    let fmText = minToText(fmMinutes);
+    document.getElementById('calculatedFmText').innerText = fmText;
+
+    let fDate = "01.09.2026";
+    let monthKey = "2026-09";
+    if(dateVal) {
+        let [y, m, d] = dateVal.split('-');
+        fDate = `${d}.${m}.${y}`;
+        monthKey = `${y}-${m}`;
+    }
+
+    let holidayTag = holiday ? ` [${holiday.name}]` : "";
+    let msg = `${fDate} (${finalCode})${holidayTag}
+*${name || "Personel Adı"}*
+Giriş: ${inTime || "--:--"}
+Çıkış: ${outTime || "--:--"}
+FM: *${fmText}*`;
+    document.getElementById('messagePreview').innerText = msg;
+
+    return { msg, date: fDate, isoDate: dateVal, monthKey: monthKey, code: finalCode, inTime, outTime, fmMinutes, fmText, holiday };
+}
+
+function sendToWhatsAppAndSave() {
+    let name = document.getElementById('empName').value.trim();
+    if(!name) {
+        alert("Lütfen Adınızı ve Soyadınızı giriniz.");
+        document.getElementById('empName').focus();
+        return;
+    }
+
+    let inTime = document.getElementById('inTime').value.trim();
+    let outTime = document.getElementById('outTime').value.trim();
+    if(!inTime || !outTime) {
+        alert("Lütfen Giriş ve Çıkış saatlerini eksiksiz giriniz.");
+        return;
+    }
+
+    let result = calculate();
+
+    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+
+    let record = {
+        id: Date.now(),
+        date: result.date,
+        isoDate: result.isoDate,
+        monthKey: result.monthKey,
+        code: result.code,
+        inTime: result.inTime,
+        outTime: result.outTime,
+        fmMinutes: result.fmMinutes,
+        fmText: result.fmText,
+        holidayName: result.holiday ? result.holiday.name : ""
+    };
+
+    history.push(record);
+    localStorage.setItem("m5_mesai_history", JSON.stringify(history));
+
+    let url = `https://wa.me/${TARGET_PHONE}?text=${encodeURIComponent(result.msg)}`;
+    window.open(url, '_blank');
+}
+
+function populateMonthFilter() {
+    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    let select = document.getElementById('monthFilter');
+    let prevSelected = select.value;
+
+    let now = new Date();
+    let curMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+    let monthsSet = new Set();
+    monthsSet.add(curMonthKey);
+
+    history.forEach(item => {
+        if(item.monthKey) monthsSet.add(item.monthKey);
+        else if(item.isoDate) monthsSet.add(item.isoDate.substring(0, 7));
+    });
+
+    let sortedMonths = Array.from(monthsSet).sort().reverse();
+
+    select.innerHTML = "";
+    sortedMonths.forEach(mKey => {
+        let [y, m] = mKey.split('-');
+        let label = `${MONTH_NAMES[parseInt(m, 10) - 1]} ${y}`;
+        let opt = document.createElement('option');
+        opt.value = mKey;
+        opt.innerText = label;
+        select.appendChild(opt);
+    });
+
+    if(prevSelected && sortedMonths.includes(prevSelected)) {
+        select.value = prevSelected;
+    } else {
+        select.value = curMonthKey;
+    }
+}
+
+function renderHistory() {
+    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    let container = document.getElementById('historyContainer');
+    let select = document.getElementById('monthFilter');
+    let selectedMonthKey = select.value;
+
+    container.innerHTML = "";
+    let totalMinutes = 0;
+
+    let filtered = history.filter(item => {
+        let key = item.monthKey || (item.isoDate ? item.isoDate.substring(0, 7) : "");
+        return key === selectedMonthKey;
+    });
+
+    filtered.sort((a, b) => (a.isoDate || "").localeCompare(b.isoDate || ""));
+
+    if(select.selectedIndex >= 0) {
+        let selectedLabel = select.options[select.selectedIndex].text.toUpperCase();
+        document.getElementById('totalCardMonthLabel').innerText = `${selectedLabel} TOPLAM FAZLA MESAİ`;
+    }
+
+    document.getElementById('historyCount').innerText = `${filtered.length} Günlük Kayıt`;
+
+    if(filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">Bu aya ait kaydedilmiş bir mesai bildirimi bulunmuyor.</div>`;
+        document.getElementById('grandTotalFm').innerText = "0 saat 0 dk";
+        return;
+    }
+
+    filtered.forEach(item => {
+        totalMinutes += item.fmMinutes || 0;
+
+        let holidayTag = item.holidayName ? `<span style="color:#dc2626; font-size:11px; display:block;">🇹🇷 ${item.holidayName}</span>` : "";
+
+        let div = document.createElement('div');
+        div.className = "history-item";
+        div.innerHTML = `
+            <div class="history-left">
+                <div class="history-date">${item.date} <span style="color:var(--m5-circle-bg); font-size:12px;">(${item.code})</span></div>
+                ${holidayTag}
+                <div class="history-times">Saat: ${item.inTime} - ${item.outTime}</div>
+            </div>
+            <div class="history-right">
+                <span class="history-fm">${item.fmText}</span>
+                <button class="btn-del-item" title="Sil" onclick="deleteHistoryItem(${item.id})">✕</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    let totalH = Math.floor(totalMinutes / 60);
+    let totalM = totalMinutes % 60;
+    document.getElementById('grandTotalFm').innerText = `${totalH} saat ${totalM} dk`;
+}
+
+function deleteHistoryItem(id) {
+    if(!confirm("Bu mesai kaydını silmek istediğinize emin misiniz?")) return;
+    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    history = history.filter(item => item.id !== id);
+    localStorage.setItem("m5_mesai_history", JSON.stringify(history));
+    populateMonthFilter();
+    renderHistory();
+}
+
+function clearSelectedMonth() {
+    let select = document.getElementById('monthFilter');
+    let monthLabel = select.options[select.selectedIndex].text;
+    if(!confirm(`${monthLabel} ayına ait tüm kayıtlar silinecek. Emin misiniz?`)) return;
+
+    let selectedMonthKey = select.value;
+    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    history = history.filter(item => {
+        let key = item.monthKey || (item.isoDate ? item.isoDate.substring(0, 7) : "");
+        return key !== selectedMonthKey;
+    });
+
+    localStorage.setItem("m5_mesai_history", JSON.stringify(history));
+    populateMonthFilter();
+    renderHistory();
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
