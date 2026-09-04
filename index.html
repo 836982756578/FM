@@ -619,7 +619,7 @@
         <div class="modal-badge">📋</div>
         <div class="modal-title">Fazla Mesai Hesaplama Aracı</div>
         <div class="modal-body">
-            Bu form, günlük çalışma ve fazla mesai bilgilerinizi hesaplayıp <strong>Kontrol Merkezi'ne WhatsApp üzerinden iletmenizi</strong> sağlar.
+            Bu form, fazla mesai bilgilerinizi hesaplayıp <strong>Kontrol Merkezi'ne WhatsApp üzerinden iletmenizi</strong> sağlar.
             <ul>
                 <li><strong>Otomatik Hesaplama:</strong> Vardiyanıza veya Resmi Tatil durumuna göre mesainiz otomatik bulunur.</li>
                 <li><strong>Resmi Tatiller:</strong> Tam gün tatillerde tüm süre, arife günlerinde 13:00 sonrası otomatik FM sayılır.</li>
@@ -631,7 +631,7 @@
                 Bu uygulama resmi bir kurum veya işletme yazılımı değildir; vardiya takibini kolaylaştırmak amacıyla bireysel olarak geliştirilmiştir. Kullanım zorunluluğu yoktur. Hesaplanan süreler resmi bordro veya puantaj niteliği taşımaz, kontrol ve bildirim sorumluluğu personele aittir.
             </div>
             <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 700; color: var(--m5-circle-bg);">İyi çalışmalar dileriz.</span>
+                <span style="font-weight: 700; color: var(--m5-circle-bg);">İyi çalışmalar.</span>
                 <span style="font-style: italic; font-size: 13px; color: #94a3b8; opacity: 0.65; letter-spacing: 1.5px; font-weight: 500;">S.Ş.</span>
             </div>
         </div>
@@ -643,7 +643,7 @@
     <div class="top-header">
         <div class="m5-round-logo" onclick="window.openWelcomeModal()" title="Bilgilendirme">⏱️</div>
         <h1>Fazla Mesai Bildirim Formu</h1>
-        <div class="header-monogram">S.Ş.</div>
+        <div class="header-monogram"></div>
     </div>
 
     <!-- PWA Yükleme Barı -->
@@ -713,6 +713,12 @@
         <label>WhatsApp Mesaj Önizlemesi</label>
         <div class="preview-box" id="messagePreview"></div>
 
+                <div class="form-group" style="margin-top: 6px;">
+            <label for="targetPhone" style="font-size: 12px; color: #64748b;">İletilecek Numara (İsteğe Bağlı):</label>
+            <input type="text" id="targetPhone" inputmode="tel" placeholder="Boş bırakırsanız WhatsApp'tan kişi seçersiniz" oninput="saveTargetPhone()" style="font-size: 13px; padding: 9px 12px;">
+            <small style="font-size: 11px; color: #94a3b8; margin-top: 3px; display: block;">* Kontrol Merkezi numarasını buraya bir defa kaydedebilirsiniz. Boş bırakırsanız göndereceğiniz kişiyi WhatsApp içinden seçersiniz.</small>
+        </div>
+
         <button class="btn-whatsapp" onclick="sendToWhatsAppAndSave()">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.532 1.77.814 2.797.815 3.179 0 5.767-2.587 5.768-5.766.002-3.18-2.585-5.768-5.769-5.768zm0 10.354c-.933 0-1.745-.262-2.483-.728l-.178-.112-1.84.483.491-1.794-.117-.187a4.57 4.57 0 01-.703-2.45c.001-2.529 2.059-4.588 4.83-4.588 2.528 0 4.587 2.059 4.586 4.588 0 2.529-2.059 4.588-4.589 4.588zm5.203-3.693c-.287-.144-1.696-.837-1.959-.933-.263-.096-.454-.144-.646.144-.191.288-.742.933-.909 1.124-.167.192-.335.216-.622.072-.287-.144-1.213-.447-2.311-1.427-.854-.762-1.43-1.703-1.598-1.99-.168-.288-.018-.444.126-.587.13-.13.288-.336.431-.504.144-.168.192-.288.288-.48.096-.192.048-.36-.024-.504-.072-.144-.646-1.558-.885-2.133-.233-.561-.47-.485-.646-.494l-.551-.01c-.191 0-.503.072-.766.36-.263.288-1.005.983-1.005 2.397 0 1.414 1.029 2.78 1.173 2.972.144.192 2.025 3.093 4.907 4.338.686.296 1.222.473 1.639.606.689.219 1.316.188 1.812.114.553-.083 1.696-.693 1.936-1.363.24-.67.24-1.245.168-1.363-.072-.118-.263-.19-.55-.334z"/>
@@ -745,12 +751,21 @@
             Bu araç <strong>tamamen çevrim dışı (internetsiz)</strong> çalışır; girdiğiniz hiçbir veri sunuculara veya üçüncü şahıslara aktarılmaz, yalnızca bu cihazda tutulur.<br><br>
             ⚠️ <em>Bu araç resmi bir kurum yazılımı değildir; kullanım personelin kendi tercihine bağlıdır. Tarayıcı geçmişi temizlendiğinde yerel kayıtlar sıfırlanabilir.</em>
         </div>
-        <div class="footer-watermark"><em>S.Ş.</em></div>
+        <div class="footer-watermark"><em></em></div>
 </div>
 </div>
 
 <script>
-const TARGET_PHONE = "905498220260";
+// WhatsApp hedef numarası artık kod içinde sabit değil, kullanıcı tarafından cihazda tutulur
+function getTargetPhone() {
+    let p = localStorage.getItem("fm_target_phone") || "";
+    return p.replace(/[^0-9]/g, '');
+}
+
+function saveTargetPhone() {
+    let p = document.getElementById('targetPhone').value.trim();
+    localStorage.setItem("fm_target_phone", p);
+}
 
 const SHIFTS = {
     "NS": { start: 6*60+30, end: 15*60+30, defIn: "06:30", defOut: "15:30" },
@@ -853,6 +868,11 @@ function init() {
 
     const savedName = localStorage.getItem("m5_worker_name");
     if(savedName) document.getElementById('empName').value = savedName;
+
+    const savedPhone = localStorage.getItem("fm_target_phone");
+    if(savedPhone) {
+        document.getElementById('targetPhone').value = savedPhone;
+    }
 
     updateUI();
     populateMonthFilter();
@@ -1109,7 +1129,14 @@ function sendToWhatsAppAndSave() {
     history.push(record);
     localStorage.setItem("m5_mesai_history", JSON.stringify(history));
 
-    let url = `https://wa.me/${TARGET_PHONE}?text=${encodeURIComponent(result.msg)}`;
+    let phone = getTargetPhone();
+    let url = "";
+    if (phone) {
+        url = `https://wa.me/${phone}?text=${encodeURIComponent(result.msg)}`;
+    } else {
+        // Numara yoksa doğrudan WhatsApp kişi/sohbet seçim ekranı açılır
+        url = `https://api.whatsapp.com/send?text=${encodeURIComponent(result.msg)}`;
+    }
     window.open(url, '_blank');
 }
 
