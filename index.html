@@ -1023,15 +1023,18 @@ function calculate() {
         let adjOut = outMin < inMin ? (outMin + 1440) : outMin;
         let totalWorked = adjOut - inMin;
 
+        let mealDeduction = (selectedBaseShift === 'G') ? 30 : 60;
+        let mealLabel = (selectedBaseShift === 'G') ? "30 DK YEMEK DÜŞÜLDÜ" : "1 SAAT YEMEK DÜŞÜLDÜ";
+
         // 1. TAM GÜN RESMİ TATİL DURUMU:
         if(holiday && holiday.type === "FULL") {
             // Tam gün resmi tatilde çalışılan sürenin tamamı fazla mesaidir
             if(totalWorked > 240) {
-                fmMinutes = Math.max(0, totalWorked - 60); // 1 saat yemek düşülür
+                fmMinutes = Math.max(0, totalWorked - mealDeduction);
             } else {
                 fmMinutes = totalWorked;
             }
-            document.getElementById('resultTypeLabel').innerText = `🇹🇷 RESMİ TATİL MESAİSİ (${holiday.name.toUpperCase()})`;
+            document.getElementById('resultTypeLabel').innerText = `🇹🇷 RESMİ TATİL MESAİSİ (${mealLabel})`;
         }
         // 2. YARIM GÜN RESMİ TATİL (ARİFE) DURUMU: Mesailer 13:00'dan sonra başlar!
         else if(holiday && holiday.type === "HALF") {
@@ -1056,11 +1059,11 @@ function calculate() {
         // 3. NORMAL GÜNLERDE NORMAL FM (TAM ÇALIŞMA):
         else if(currentMode === 'tam') {
             if(totalWorked > 240) {
-                fmMinutes = Math.max(0, totalWorked - 60); // 1 saat yemek düşülür
+                fmMinutes = Math.max(0, totalWorked - mealDeduction);
             } else {
                 fmMinutes = totalWorked;
             }
-            document.getElementById('resultTypeLabel').innerText = "HESAPLANAN NORMAL FM (1 SAAT YEMEK DÜŞÜLDÜ)";
+            document.getElementById('resultTypeLabel').innerText = `HESAPLANAN NORMAL FM (${mealLabel})`;
         }
         // 4. NORMAL GÜNLERDE KISMİ FM (VARDİYA DIŞI TAŞMA):
         else {
