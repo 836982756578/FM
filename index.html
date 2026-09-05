@@ -103,7 +103,6 @@
             margin: 0;
         }
 
-        
         /* PWA Yükleme Bannerı */
         .pwa-install-banner {
             display: none;
@@ -608,7 +607,6 @@
             letter-spacing: 2.5px;
             user-select: none;
         }
-
     </style>
 </head>
 <body>
@@ -713,7 +711,7 @@
         <label>WhatsApp Mesaj Önizlemesi</label>
         <div class="preview-box" id="messagePreview"></div>
 
-                <div class="form-group" style="margin-top: 6px;">
+        <div class="form-group" style="margin-top: 6px;">
             <label for="targetPhone" style="font-size: 12px; color: #64748b;">İletilecek Numara (İsteğe Bağlı):</label>
             <input type="text" id="targetPhone" inputmode="tel" placeholder="Boş bırakırsanız WhatsApp'tan kişi seçersiniz" oninput="saveTargetPhone()" style="font-size: 13px; padding: 9px 12px;">
             <small style="font-size: 11px; color: #94a3b8; margin-top: 3px; display: block;">* Kontrol Merkezi numarasını buraya bir defa kaydedebilirsiniz. Boş bırakırsanız göndereceğiniz kişiyi WhatsApp içinden seçersiniz.</small>
@@ -752,7 +750,7 @@
             ⚠️ <em>Bu araç resmi bir kurum yazılımı değildir; kullanım personelin kendi tercihine bağlıdır. Tarayıcı geçmişi temizlendiğinde yerel kayıtlar sıfırlanabilir.</em>
         </div>
         <div class="footer-watermark"><em></em></div>
-</div>
+    </div>
 </div>
 
 <script>
@@ -780,7 +778,7 @@ const MONTH_NAMES = [
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
 ];
 
-// TÜRKİYE RESMİ TATİLLERİ (Sabit ve Dini Bayramlar)
+// TÜRKİYE RESMİ TATİLLERİ
 const HOLIDAYS = {
     "2024-01-01": { type: "FULL", name: "Yılbaşı" },
     "2024-04-09": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
@@ -1028,7 +1026,6 @@ function calculate() {
 
         // 1. TAM GÜN RESMİ TATİL DURUMU:
         if(holiday && holiday.type === "FULL") {
-            // Tam gün resmi tatilde çalışılan sürenin tamamı fazla mesaidir
             if(totalWorked > 240) {
                 fmMinutes = Math.max(0, totalWorked - mealDeduction);
             } else {
@@ -1036,20 +1033,17 @@ function calculate() {
             }
             document.getElementById('resultTypeLabel').innerText = `🇹🇷 RESMİ TATİL MESAİSİ (${mealLabel})`;
         }
-        // 2. YARIM GÜN RESMİ TATİL (ARİFE) DURUMU: Mesailer 13:00'dan sonra başlar!
+        // 2. YARIM GÜN RESMİ TATİL (ARİFE) DURUMU:
         else if(holiday && holiday.type === "HALF") {
             let halfDayStart = 13 * 60; // 13:00
             let holidayStartMin = Math.max(inMin, halfDayStart);
 
             if(adjOut > holidayStartMin) {
                 let holidayWorked = adjOut - holidayStartMin;
-                // 13:00 öncesi için normal vardiya taşması varsa ekle
                 let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
                 let earlyStart = Math.max(0, base.start - inMin);
-
                 fmMinutes = holidayWorked + earlyStart;
             } else {
-                // 13:00 öncesinde kalındıysa normal mesai farkı
                 let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
                 let early = Math.max(0, base.start - inMin);
                 fmMinutes = early;
@@ -1137,7 +1131,6 @@ function sendToWhatsAppAndSave() {
     if (phone) {
         url = `https://wa.me/${phone}?text=${encodeURIComponent(result.msg)}`;
     } else {
-        // Numara yoksa doğrudan WhatsApp kişi/sohbet seçim ekranı açılır
         url = `https://api.whatsapp.com/send?text=${encodeURIComponent(result.msg)}`;
     }
     window.open(url, '_blank');
@@ -1259,48 +1252,44 @@ function clearSelectedMonth() {
     renderHistory();
 }
 
-
-    // PWA Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker kayıt başarılı:', reg.scope))
-                .catch(err => console.log('Service Worker kayıt hatası:', err));
-        });
-    }
-
-
-    // PWA Kurulum Mantığı (beforeinstallprompt)
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        const banner = document.getElementById('pwaInstallBanner');
-        if (banner) {
-            banner.style.display = 'flex';
-        }
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW OK:', reg.scope))
+            .catch(err => console.log('SW Error:', err));
     });
+}
 
-    window.installPWA = function() {
-        if (!deferredPrompt) {
-            alert('Yükleme penceresi açılmıyorsa tarayıcınızın sağ üstündeki üç noktaya (⋮) dokunup "Uygulamayı Yükle" veya "Ana Ekrana Ekle"yi seçebilirsiniz.');
-            return;
+// PWA Kurulum Mantığı
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const banner = document.getElementById('pwaInstallBanner');
+    if (banner) banner.style.display = 'flex';
+});
+
+window.installPWA = function() {
+    if (!deferredPrompt) {
+        alert('Yükleme penceresi açılmıyorsa tarayıcınızın sağ üstündeki üç noktaya (⋮) dokunup "Uygulamayı Yükle" veya "Ana Ekrana Ekle"yi seçebilirsiniz.');
+        return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+            const banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.style.display = 'none';
         }
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                const banner = document.getElementById('pwaInstallBanner');
-                if (banner) banner.style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
-    };
-
-    window.addEventListener('appinstalled', () => {
-        const banner = document.getElementById('pwaInstallBanner');
-        if (banner) banner.style.display = 'none';
         deferredPrompt = null;
     });
+};
+
+window.addEventListener('appinstalled', () => {
+    const banner = document.getElementById('pwaInstallBanner');
+    if (banner) banner.style.display = 'none';
+    deferredPrompt = null;
+});
 
 window.onload = init;
 </script>
