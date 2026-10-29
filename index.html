@@ -10,6 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Mesai Takip">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
@@ -192,7 +193,13 @@
         input:focus, select:focus {
             border-color: var(--m5-circle-bg);
             background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(97, 45, 89, 0.15);
+            box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.12);
+        }
+
+        input.input-invalid {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            color: #b91c1c !important;
         }
 
         /* Tatil Bilgi Rozeti */
@@ -263,6 +270,7 @@
             color: #475569;
             transition: all 0.18s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            user-select: none;
         }
 
         .chip-ns  { border-color: var(--color-ns); color: #047857; }
@@ -292,7 +300,7 @@
         }
 
         .result-box {
-            background-color: #fdf4ff;
+            background-color: #f8fafc;
             border: 1.5px dashed var(--m5-circle-bg);
             border-radius: 12px;
             padding: 12px;
@@ -384,7 +392,7 @@
             padding: 18px;
             border-radius: 14px;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             box-shadow: 0 4px 12px rgba(97, 45, 89, 0.25);
         }
         .total-card-sub {
@@ -398,6 +406,26 @@
             font-size: 26px;
             font-weight: 900;
             margin-top: 4px;
+        }
+
+        .btn-copy-month {
+            width: 100%;
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-copy-month:active {
+            background: #e2e8f0;
         }
 
         .history-controls {
@@ -633,7 +661,7 @@
                 <span style="font-style: italic; font-size: 13px; color: #94a3b8; opacity: 0.65; letter-spacing: 1.5px; font-weight: 500;">S.Ş.</span>
             </div>
         </div>
-        <button class="btn-modal-close" onclick="closeWelcomeModal()">Anladım, Başla</button>
+        <button class="btn-modal-close" type="button" onclick="closeWelcomeModal()">Anladım, Başla</button>
     </div>
 </div>
 
@@ -650,8 +678,8 @@
     </div>
 
     <div class="tab-bar">
-        <button class="tab-btn active" id="tabBtnForm" onclick="switchTab('form')">Mesai Bildir</button>
-        <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">Aylık Geçmiş</button>
+        <button type="button" class="tab-btn active" id="tabBtnForm" onclick="switchTab('form')">Mesai Bildir</button>
+        <button type="button" class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">Aylık Geçmiş</button>
     </div>
 
     <!-- 1. Sekme -->
@@ -695,11 +723,11 @@
         <div class="time-row">
             <div class="form-group">
                 <label for="inTime">Giriş Saati</label>
-                <input type="text" id="inTime" inputmode="numeric" placeholder="06:30" maxlength="5" oninput="formatTimeInput(this); calculate();">
+                <input type="text" id="inTime" inputmode="numeric" enterkeyhint="next" placeholder="06:30" maxlength="5" oninput="formatTimeInput(this); calculate();" onblur="normalizeTimeOnBlur(this); calculate();">
             </div>
             <div class="form-group">
                 <label for="outTime">Çıkış Saati</label>
-                <input type="text" id="outTime" inputmode="numeric" placeholder="15:30" maxlength="5" oninput="formatTimeInput(this); calculate();">
+                <input type="text" id="outTime" inputmode="numeric" enterkeyhint="done" placeholder="15:30" maxlength="5" oninput="formatTimeInput(this); calculate();" onblur="normalizeTimeOnBlur(this); calculate();">
             </div>
         </div>
 
@@ -713,11 +741,11 @@
 
         <div class="form-group" style="margin-top: 6px;">
             <label for="targetPhone" style="font-size: 12px; color: #64748b;">İletilecek Numara (İsteğe Bağlı):</label>
-            <input type="text" id="targetPhone" inputmode="tel" placeholder="Boş bırakırsanız WhatsApp'tan kişi seçersiniz" oninput="saveTargetPhone()" style="font-size: 13px; padding: 9px 12px;">
-            <small style="font-size: 11px; color: #94a3b8; margin-top: 3px; display: block;">* Kontrol Merkezi numarasını buraya bir defa kaydedebilirsiniz. Boş bırakırsanız göndereceğiniz kişiyi WhatsApp içinden seçersiniz.</small>
+            <input type="text" id="targetPhone" inputmode="tel" placeholder="Örn: 0532 123 45 67 (Boşsa kişi seçilir)" oninput="saveTargetPhone()" style="font-size: 13px; padding: 9px 12px;">
+            <small style="font-size: 11px; color: #94a3b8; margin-top: 3px; display: block;">* Kontrol Merkezi numarasını buraya bir defa kaydedebilirsiniz (05xx veya +905xx). Boş bırakırsanız göndereceğiniz kişiyi WhatsApp içinden seçersiniz.</small>
         </div>
 
-        <button class="btn-whatsapp" onclick="sendToWhatsAppAndSave()">
+        <button type="button" class="btn-whatsapp" onclick="sendToWhatsAppAndSave()">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.532 1.77.814 2.797.815 3.179 0 5.767-2.587 5.768-5.766.002-3.18-2.585-5.768-5.769-5.768zm0 10.354c-.933 0-1.745-.262-2.483-.728l-.178-.112-1.84.483.491-1.794-.117-.187a4.57 4.57 0 01-.703-2.45c.001-2.529 2.059-4.588 4.83-4.588 2.528 0 4.587 2.059 4.586 4.588 0 2.529-2.059 4.588-4.589 4.588zm5.203-3.693c-.287-.144-1.696-.837-1.959-.933-.263-.096-.454-.144-.646.144-.191.288-.742.933-.909 1.124-.167.192-.335.216-.622.072-.287-.144-1.213-.447-2.311-1.427-.854-.762-1.43-1.703-1.598-1.99-.168-.288-.018-.444.126-.587.13-.13.288-.336.431-.504.144-.168.192-.288.288-.48.096-.192.048-.36-.024-.504-.072-.144-.646-1.558-.885-2.133-.233-.561-.47-.485-.646-.494l-.551-.01c-.191 0-.503.072-.766.36-.263.288-1.005.983-1.005 2.397 0 1.414 1.029 2.78 1.173 2.972.144.192 2.025 3.093 4.907 4.338.686.296 1.222.473 1.639.606.689.219 1.316.188 1.812.114.553-.083 1.696-.693 1.936-1.363.24-.67.24-1.245.168-1.363-.072-.118-.263-.19-.55-.334z"/>
             </svg>
@@ -737,9 +765,13 @@
             <div class="total-card-val" id="grandTotalFm">0 saat 0 dk</div>
         </div>
 
+        <button type="button" class="btn-copy-month" id="btnCopyMonth" onclick="copyMonthlySummary()">
+            📋 Aylık Özeti Kopyala
+        </button>
+
         <div class="history-controls">
             <span class="history-count" id="historyCount">0 Günlük Kayıt</span>
-            <button class="btn-clear-month" onclick="clearSelectedMonth()">Bu Ayı Temizle</button>
+            <button type="button" class="btn-clear-month" onclick="clearSelectedMonth()">Bu Ayı Temizle</button>
         </div>
 
         <div class="history-list" id="historyContainer"></div>
@@ -754,10 +786,17 @@
 </div>
 
 <script>
-// WhatsApp hedef numarası artık kod içinde sabit değil, kullanıcı tarafından cihazda tutulur
+// WhatsApp hedef numarasını Türkiye ülke koduyla (905xxxxxxxxx) normalize eder
 function getTargetPhone() {
-    let p = localStorage.getItem("fm_target_phone") || "";
-    return p.replace(/[^0-9]/g, '');
+    let p = (localStorage.getItem("fm_target_phone") || "").replace(/[^0-9]/g, '');
+    if (!p) return "";
+    if (p.startsWith("00")) p = p.slice(2);
+    if (p.length === 11 && p.startsWith("05")) {
+        p = "90" + p.slice(1);
+    } else if (p.length === 10 && p.startsWith("5")) {
+        p = "90" + p;
+    }
+    return p;
 }
 
 function saveTargetPhone() {
@@ -767,10 +806,10 @@ function saveTargetPhone() {
 
 const SHIFTS = {
     "NS": { start: 6*60+30, end: 15*60+30, defIn: "06:30", defOut: "15:30" },
-    "NA": { start: 13*60, end: 22*60, defIn: "13:00", defOut: "22:00" },
-    "S":  { start: 5*60, end: 14*60, defIn: "05:00", defOut: "14:00" },
-    "A":  { start: 16*60, end: 25*60, defIn: "16:00", defOut: "01:00" },
-    "G":  { start: 22*60, end: 30*60, defIn: "22:00", defOut: "06:00" }
+    "NA": { start: 13*60,   end: 22*60,    defIn: "13:00", defOut: "22:00" },
+    "S":  { start: 5*60,    end: 14*60,    defIn: "05:00", defOut: "14:00" },
+    "A":  { start: 16*60,   end: 25*60,    defIn: "16:00", defOut: "01:00" },
+    "G":  { start: 22*60,   end: 30*60,    defIn: "22:00", defOut: "06:00" }
 };
 
 const MONTH_NAMES = [
@@ -778,7 +817,7 @@ const MONTH_NAMES = [
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
 ];
 
-// TÜRKİYE RESMİ TATİLLERİ
+// TÜRKİYE RESMİ TATİLLERİ (Diyanet Takvimine Uygun)
 const HOLIDAYS = {
     "2024-01-01": { type: "FULL", name: "Yılbaşı" },
     "2024-04-09": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
@@ -835,17 +874,17 @@ const HOLIDAYS = {
     "2026-10-29": { type: "FULL", name: "29 Ekim Cumhuriyet Bayramı" },
 
     "2027-01-01": { type: "FULL", name: "Yılbaşı" },
-    "2027-03-09": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
-    "2027-03-10": { type: "FULL", name: "Ramazan Bayramı 1. Gün" },
-    "2027-03-11": { type: "FULL", name: "Ramazan Bayramı 2. Gün" },
-    "2027-03-12": { type: "FULL", name: "Ramazan Bayramı 3. Gün" },
+    "2027-03-08": { type: "HALF", name: "Ramazan Bayramı Arifesi (13:00 Sonrası)" },
+    "2027-03-09": { type: "FULL", name: "Ramazan Bayramı 1. Gün" },
+    "2027-03-10": { type: "FULL", name: "Ramazan Bayramı 2. Gün" },
+    "2027-03-11": { type: "FULL", name: "Ramazan Bayramı 3. Gün" },
     "2027-04-23": { type: "FULL", name: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı" },
     "2027-05-01": { type: "FULL", name: "1 Mayıs Emek ve Dayanışma Günü" },
-    "2027-05-16": { type: "HALF", name: "Kurban Bayramı Arifesi (13:00 Sonrası)" },
-    "2027-05-17": { type: "FULL", name: "Kurban Bayramı 1. Gün" },
-    "2027-05-18": { type: "FULL", name: "Kurban Bayramı 2. Gün" },
-    "2027-05-19": { type: "FULL", name: "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
-    "2027-05-20": { type: "FULL", name: "Kurban Bayramı 4. Gün" },
+    "2027-05-15": { type: "HALF", name: "Kurban Bayramı Arifesi (13:00 Sonrası)" },
+    "2027-05-16": { type: "FULL", name: "Kurban Bayramı 1. Gün" },
+    "2027-05-17": { type: "FULL", name: "Kurban Bayramı 2. Gün" },
+    "2027-05-18": { type: "FULL", name: "Kurban Bayramı 3. Gün" },
+    "2027-05-19": { type: "FULL", name: "19 Mayıs Bayramı & Kurban Bayramı 4. Gün" },
     "2027-07-15": { type: "FULL", name: "15 Temmuz Demokrasi ve Milli Birlik Günü" },
     "2027-08-30": { type: "FULL", name: "30 Ağustos Zafer Bayramı" },
     "2027-10-28": { type: "HALF", name: "29 Ekim Cumhuriyet Bayramı Arifesi (13:00 Sonrası)" },
@@ -865,11 +904,17 @@ function init() {
     document.getElementById('workDate').value = `${yyyy}-${mm}-${dd}`;
 
     const savedName = localStorage.getItem("m5_worker_name");
-    if(savedName) document.getElementById('empName').value = savedName;
+    if (savedName) document.getElementById('empName').value = savedName;
 
     const savedPhone = localStorage.getItem("fm_target_phone");
-    if(savedPhone) {
+    if (savedPhone) {
         document.getElementById('targetPhone').value = savedPhone;
+    }
+
+    // Seçili gelen NS vardiyasının saatlerini başlangıçta doldur (sadece çıkış saati değiştirildiğinde boş kalmasın)
+    if (SHIFTS[selectedBaseShift]) {
+        document.getElementById('inTime').value = SHIFTS[selectedBaseShift].defIn;
+        document.getElementById('outTime').value = SHIFTS[selectedBaseShift].defOut;
     }
 
     updateUI();
@@ -910,7 +955,7 @@ function switchTab(tab) {
     const pageForm = document.getElementById('pageForm');
     const pageHistory = document.getElementById('pageHistory');
 
-    if(tab === 'form') {
+    if (tab === 'form') {
         tabBtnForm.classList.add('active');
         tabBtnHistory.classList.remove('active');
         pageForm.classList.add('active');
@@ -930,7 +975,7 @@ function setMode(mode) {
     const btnKismi = document.getElementById('btnModeKismi');
     const btnTam = document.getElementById('btnModeTam');
 
-    if(mode === 'kismi') {
+    if (mode === 'kismi') {
         btnKismi.className = "mode-btn active-kismi";
         btnTam.className = "mode-btn";
         document.getElementById('resultBox').classList.remove('tam-fm-box');
@@ -944,9 +989,13 @@ function setMode(mode) {
 
 function selectShift(code) {
     selectedBaseShift = code;
-    if(SHIFTS[code]) {
-        document.getElementById('inTime').value = SHIFTS[code].defIn;
-        document.getElementById('outTime').value = SHIFTS[code].defOut;
+    if (SHIFTS[code]) {
+        const inEl = document.getElementById('inTime');
+        const outEl = document.getElementById('outTime');
+        inEl.value = SHIFTS[code].defIn;
+        outEl.value = SHIFTS[code].defOut;
+        inEl.classList.remove('input-invalid');
+        outEl.classList.remove('input-invalid');
     }
     updateUI();
 }
@@ -954,8 +1003,8 @@ function selectShift(code) {
 function updateUI() {
     document.querySelectorAll('.shift-chip').forEach(chip => {
         chip.classList.remove('active-kismi', 'active-tam');
-        if(chip.getAttribute('data-code') === selectedBaseShift) {
-            if(currentMode === 'kismi') {
+        if (chip.getAttribute('data-code') === selectedBaseShift) {
+            if (currentMode === 'kismi') {
                 chip.classList.add('active-kismi');
             } else {
                 chip.classList.add('active-tam');
@@ -967,26 +1016,93 @@ function updateUI() {
 }
 
 function formatTimeInput(input) {
-    let v = input.value.replace(/[^0-9]/g, '');
-    if(v.length >= 3) {
-        input.value = v.substring(0, 2) + ':' + v.substring(2, 4);
+    let raw = input.value;
+    let digits = raw.replace(/[^0-9]/g, '');
+
+    // İlk rakam 3-9 arasıysa (örn. 630 -> 06:30) başına otomatik 0 ekle (63:0 hatasını önler)
+    if (digits.length >= 2 && parseInt(digits[0], 10) >= 3 && !raw.includes(':')) {
+        digits = '0' + digits;
+    }
+
+    if (digits.length >= 3) {
+        input.value = digits.substring(0, 2) + ':' + digits.substring(2, 4);
+    } else {
+        input.value = raw.replace(/[^0-9:]/g, '');
+    }
+
+    validateTimeFieldStyle(input, false);
+}
+
+function normalizeTimeOnBlur(input) {
+    let val = input.value.trim();
+    if (!val) {
+        input.classList.remove('input-invalid');
+        return;
+    }
+    // "6:30" -> "06:30", "17" -> "17:00", "7" -> "07:00"
+    if (/^\d{1,2}$/.test(val)) {
+        const h = parseInt(val, 10);
+        if (h >= 0 && h <= 23) {
+            input.value = String(h).padStart(2, '0') + ':00';
+        }
+    } else if (/^\d:\d{2}$/.test(val)) {
+        input.value = '0' + val;
+    }
+    validateTimeFieldStyle(input, true);
+}
+
+function validateTimeFieldStyle(input, isBlur) {
+    const val = input.value.trim();
+    if (!val) {
+        input.classList.remove('input-invalid');
+        return;
+    }
+    if (val.length === 5 || isBlur) {
+        if (timeToMin(val) === null) {
+            input.classList.add('input-invalid');
+        } else {
+            input.classList.remove('input-invalid');
+        }
+    } else {
+        input.classList.remove('input-invalid');
     }
 }
 
 function timeToMin(t) {
-    if(!t || !t.includes(':')) return null;
-    let [h, m] = t.split(':').map(Number);
-    if(isNaN(h) || isNaN(m)) return null;
+    if (!t || !/^\d{2}:\d{2}$/.test(t)) return null;
+    const [h, m] = t.split(':').map(Number);
+    if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) return null;
     return h * 60 + m;
 }
 
 function minToText(m) {
-    if(m <= 0) return "0 dk";
+    if (m <= 0) return "0 dk";
     let h = Math.floor(m / 60);
     let min = m % 60;
-    if(h > 0 && min > 0) return `${h} saat ${min} dk`;
-    if(h > 0) return `${h} saat`;
+    if (h > 0 && min > 0) return `${h} saat ${min} dk`;
+    if (h > 0) return `${h} saat`;
     return `${min} dk`;
+}
+
+// Gece yarısını aşan vardiyalarda (A: 16:00-01:00, G: 22:00-06:00) 00:00 sonrası girişleri doğru güne hizalar
+function normalizeWorkIntervalForShift(inMin, adjOut, base) {
+    let normIn = inMin;
+    let normOut = adjOut;
+    if (base.end > 1440) {
+        // A vardiyası (16:00) için 10:00 öncesi, G vardiyası (22:00) için 14:00 öncesi girişler gece 00:00 sonrasına aittir
+        const postMidnightCutoff = base.start - 360;
+        if (inMin < postMidnightCutoff) {
+            normIn += 1440;
+            normOut += 1440;
+        }
+    }
+    return { normIn, normOut };
+}
+
+function calculateKismiOvertime(normIn, normOut, base) {
+    const worked = Math.max(0, normOut - normIn);
+    const overlap = Math.max(0, Math.min(normOut, base.end) - Math.max(normIn, base.start));
+    return Math.max(0, worked - overlap);
 }
 
 function calculate() {
@@ -995,14 +1111,14 @@ function calculate() {
     const inTime = document.getElementById('inTime').value.trim();
     const outTime = document.getElementById('outTime').value.trim();
 
-    if(name) localStorage.setItem("m5_worker_name", name);
+    if (name) localStorage.setItem("m5_worker_name", name);
 
     // Resmi Tatil Kontrolü
     const holiday = HOLIDAYS[dateVal] || null;
     const banner = document.getElementById('holidayBanner');
     const resultBox = document.getElementById('resultBox');
 
-    if(holiday) {
+    if (holiday) {
         banner.style.display = 'flex';
         document.getElementById('holidayText').innerText = `${holiday.name} (${holiday.type === 'HALF' ? 'Yarım Gün - 13:00 Sonrası Tatil' : 'Tam Gün Resmi Tatil'})`;
         resultBox.classList.add('holiday-box');
@@ -1017,54 +1133,61 @@ function calculate() {
     let inMin = timeToMin(inTime);
     let outMin = timeToMin(outTime);
 
-    if(inMin !== null && outMin !== null) {
+    if (inMin !== null && outMin !== null) {
         let adjOut = outMin < inMin ? (outMin + 1440) : outMin;
         let totalWorked = adjOut - inMin;
 
         let mealDeduction = (selectedBaseShift === 'G') ? 30 : 60;
         let mealLabel = (selectedBaseShift === 'G') ? "30 DK YEMEK DÜŞÜLDÜ" : "1 SAAT YEMEK DÜŞÜLDÜ";
+        let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
+        let { normIn, normOut } = normalizeWorkIntervalForShift(inMin, adjOut, base);
 
         // 1. TAM GÜN RESMİ TATİL DURUMU:
-        if(holiday && holiday.type === "FULL") {
-            if(totalWorked > 240) {
+        if (holiday && holiday.type === "FULL") {
+            if (totalWorked > 240) {
                 fmMinutes = Math.max(0, totalWorked - mealDeduction);
             } else {
                 fmMinutes = totalWorked;
             }
             document.getElementById('resultTypeLabel').innerText = `🇹🇷 RESMİ TATİL MESAİSİ (${mealLabel})`;
         }
-        // 2. YARIM GÜN RESMİ TATİL (ARİFE) DURUMU:
-        else if(holiday && holiday.type === "HALF") {
+        // 2. YARIM GÜN RESMİ TATİL (ARİFE - YEMEK MOLASI DÜŞÜLMEZ):
+        else if (holiday && holiday.type === "HALF") {
             let halfDayStart = 13 * 60; // 13:00
-            let holidayStartMin = Math.max(inMin, halfDayStart);
+            // 13:00 sonrası çalışılan tüm süre (yemek düşülmeden)
+            let after13Worked = Math.max(0, normOut - Math.max(normIn, halfDayStart));
 
-            if(adjOut > holidayStartMin) {
-                let holidayWorked = adjOut - holidayStartMin;
-                let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
-                let earlyStart = Math.max(0, base.start - inMin);
-                fmMinutes = holidayWorked + earlyStart;
+            if (currentMode === 'tam') {
+                // İstirahat gününde Arife tam mesaiye gelen personel: 13:00 öncesi de mesaidir
+                let before13Worked = Math.max(0, Math.min(normOut, halfDayStart) - normIn);
+                let normalTamFm = totalWorked > 240 ? Math.max(0, totalWorked - mealDeduction) : totalWorked;
+                // 13:00 öncesi varsa tam gün FM hesabı ile 13:00 sonrası kesintisiz süreden büyük olanı koru
+                fmMinutes = before13Worked > 0 ? Math.max(normalTamFm, after13Worked) : after13Worked;
+                document.getElementById('resultTypeLabel').innerText = before13Worked > 0
+                    ? `🌙 ARİFE NORMAL FM`
+                    : `🌙 YARIM GÜN TATİL (13:00 SONRASI FM)`;
             } else {
-                let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
-                let early = Math.max(0, base.start - inMin);
-                fmMinutes = early;
+                // 13:00 öncesi vardiya dışı erken giriş varsa onu da ekle
+                let before13End = Math.min(normOut, halfDayStart);
+                let earlyBefore13 = before13End > normIn
+                    ? calculateKismiOvertime(normIn, before13End, base)
+                    : 0;
+                fmMinutes = after13Worked + earlyBefore13;
+                document.getElementById('resultTypeLabel').innerText = `🌙 YARIM GÜN TATİL (13:00 SONRASI FM)`;
             }
-            document.getElementById('resultTypeLabel').innerText = `🌙 YARIM GÜN TATİL (13:00 SONRASI FM)`;
         }
         // 3. NORMAL GÜNLERDE NORMAL FM (TAM ÇALIŞMA):
-        else if(currentMode === 'tam') {
-            if(totalWorked > 240) {
+        else if (currentMode === 'tam') {
+            if (totalWorked > 240) {
                 fmMinutes = Math.max(0, totalWorked - mealDeduction);
             } else {
                 fmMinutes = totalWorked;
             }
             document.getElementById('resultTypeLabel').innerText = `HESAPLANAN NORMAL FM (${mealLabel})`;
         }
-        // 4. NORMAL GÜNLERDE KISMİ FM (VARDİYA DIŞI TAŞMA):
+        // 4. NORMAL GÜNLERDE KISMİ FM (VARDİYA DIŞI ÇALIŞMA):
         else {
-            let base = SHIFTS[selectedBaseShift] || SHIFTS["NS"];
-            let early = Math.max(0, base.start - inMin);
-            let late = Math.max(0, adjOut - base.end);
-            fmMinutes = early + late;
+            fmMinutes = calculateKismiOvertime(normIn, normOut, base);
             document.getElementById('resultTypeLabel').innerText = "HESAPLANAN KISMİ FM";
         }
     }
@@ -1072,9 +1195,9 @@ function calculate() {
     let fmText = minToText(fmMinutes);
     document.getElementById('calculatedFmText').innerText = fmText;
 
-    let fDate = "01.09.2026";
-    let monthKey = "2026-09";
-    if(dateVal) {
+    let fDate = "--.--.----";
+    let monthKey = "";
+    if (dateVal) {
         let [y, m, d] = dateVal.split('-');
         fDate = `${d}.${m}.${y}`;
         monthKey = `${y}-${m}`;
@@ -1091,24 +1214,56 @@ FM: *${fmText}*`;
     return { msg, date: fDate, isoDate: dateVal, monthKey: monthKey, code: finalCode, inTime, outTime, fmMinutes, fmText, holiday };
 }
 
+function openWhatsAppUrl(url) {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+        window.location.href = url;
+    } else {
+        const win = window.open(url, '_blank');
+        if (!win) window.location.href = url;
+    }
+}
+
 function sendToWhatsAppAndSave() {
     let name = document.getElementById('empName').value.trim();
-    if(!name) {
+    if (!name) {
         alert("Lütfen Adınızı ve Soyadınızı giriniz.");
         document.getElementById('empName').focus();
         return;
     }
 
-    let inTime = document.getElementById('inTime').value.trim();
-    let outTime = document.getElementById('outTime').value.trim();
-    if(!inTime || !outTime) {
+    const inEl = document.getElementById('inTime');
+    const outEl = document.getElementById('outTime');
+    normalizeTimeOnBlur(inEl);
+    normalizeTimeOnBlur(outEl);
+
+    let inTime = inEl.value.trim();
+    let outTime = outEl.value.trim();
+    if (!inTime || !outTime) {
         alert("Lütfen Giriş ve Çıkış saatlerini eksiksiz giriniz.");
+        (!inTime ? inEl : outEl).focus();
+        return;
+    }
+
+    if (timeToMin(inTime) === null || timeToMin(outTime) === null) {
+        alert("Lütfen saatleri 00:00 - 23:59 aralığında geçerli biçimde giriniz (Örn: 06:30 veya 17:30).");
+        (timeToMin(inTime) === null ? inEl : outEl).focus();
         return;
     }
 
     let result = calculate();
 
-    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    if (result.fmMinutes <= 0) {
+        alert("Hesaplanan fazla mesai 0 dk görünüyor.\nLütfen giriş/çıkış saatlerini veya mesai türünü (Kısmi FM / Normal FM) kontrol ediniz.");
+        return;
+    }
+
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    } catch (e) {
+        history = [];
+    }
 
     let record = {
         id: Date.now(),
@@ -1123,21 +1278,37 @@ function sendToWhatsAppAndSave() {
         holidayName: result.holiday ? result.holiday.name : ""
     };
 
-    history.push(record);
+    const existingIdx = history.findIndex(item => item.isoDate === result.isoDate);
+    if (existingIdx !== -1) {
+        const existing = history[existingIdx];
+        const shouldReplace = confirm(
+            `${result.date} tarihine ait bir kaydınız zaten var (${existing.code}: ${existing.fmText}).\n\n` +
+            `Eski kaydın üzerine yeni süre (${result.code}: ${result.fmText}) güncellenip WhatsApp açılsın mı?`
+        );
+        if (!shouldReplace) return;
+        record.id = existing.id;
+        history[existingIdx] = record;
+    } else {
+        history.push(record);
+    }
+
     localStorage.setItem("m5_mesai_history", JSON.stringify(history));
 
     let phone = getTargetPhone();
-    let url = "";
-    if (phone) {
-        url = `https://wa.me/${phone}?text=${encodeURIComponent(result.msg)}`;
-    } else {
-        url = `https://api.whatsapp.com/send?text=${encodeURIComponent(result.msg)}`;
-    }
-    window.open(url, '_blank');
+    let url = phone
+        ? `https://wa.me/${phone}?text=${encodeURIComponent(result.msg)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(result.msg)}`;
+
+    openWhatsAppUrl(url);
 }
 
 function populateMonthFilter() {
-    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    } catch (e) {
+        history = [];
+    }
     let select = document.getElementById('monthFilter');
     let prevSelected = select.value;
 
@@ -1148,8 +1319,8 @@ function populateMonthFilter() {
     monthsSet.add(curMonthKey);
 
     history.forEach(item => {
-        if(item.monthKey) monthsSet.add(item.monthKey);
-        else if(item.isoDate) monthsSet.add(item.isoDate.substring(0, 7));
+        if (item.monthKey) monthsSet.add(item.monthKey);
+        else if (item.isoDate) monthsSet.add(item.isoDate.substring(0, 7));
     });
 
     let sortedMonths = Array.from(monthsSet).sort().reverse();
@@ -1164,15 +1335,28 @@ function populateMonthFilter() {
         select.appendChild(opt);
     });
 
-    if(prevSelected && sortedMonths.includes(prevSelected)) {
+    if (prevSelected && sortedMonths.includes(prevSelected)) {
         select.value = prevSelected;
     } else {
         select.value = curMonthKey;
     }
 }
 
+function escapeHtml(str) {
+    return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
 function renderHistory() {
-    let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    } catch (e) {
+        history = [];
+    }
     let container = document.getElementById('historyContainer');
     let select = document.getElementById('monthFilter');
     let selectedMonthKey = select.value;
@@ -1187,14 +1371,14 @@ function renderHistory() {
 
     filtered.sort((a, b) => (a.isoDate || "").localeCompare(b.isoDate || ""));
 
-    if(select.selectedIndex >= 0) {
+    if (select.selectedIndex >= 0) {
         let selectedLabel = select.options[select.selectedIndex].text.toUpperCase();
         document.getElementById('totalCardMonthLabel').innerText = `${selectedLabel} TOPLAM FAZLA MESAİ`;
     }
 
     document.getElementById('historyCount').innerText = `${filtered.length} Günlük Kayıt`;
 
-    if(filtered.length === 0) {
+    if (filtered.length === 0) {
         container.innerHTML = `<div class="empty-state">Bu aya ait kaydedilmiş bir mesai bildirimi bulunmuyor.</div>`;
         document.getElementById('grandTotalFm').innerText = "0 saat 0 dk";
         return;
@@ -1203,19 +1387,21 @@ function renderHistory() {
     filtered.forEach(item => {
         totalMinutes += item.fmMinutes || 0;
 
-        let holidayTag = item.holidayName ? `<span style="color:#dc2626; font-size:11px; display:block;">🇹🇷 ${item.holidayName}</span>` : "";
+        let holidayTag = item.holidayName
+            ? `<span style="color:#dc2626; font-size:11px; display:block;">🇹🇷 ${escapeHtml(item.holidayName)}</span>`
+            : "";
 
         let div = document.createElement('div');
         div.className = "history-item";
         div.innerHTML = `
             <div class="history-left">
-                <div class="history-date">${item.date} <span style="color:var(--m5-circle-bg); font-size:12px;">(${item.code})</span></div>
+                <div class="history-date">${escapeHtml(item.date)} <span style="color:var(--m5-circle-bg); font-size:12px;">(${escapeHtml(item.code)})</span></div>
                 ${holidayTag}
-                <div class="history-times">Saat: ${item.inTime} - ${item.outTime}</div>
+                <div class="history-times">Saat: ${escapeHtml(item.inTime)} - ${escapeHtml(item.outTime)}</div>
             </div>
             <div class="history-right">
-                <span class="history-fm">${item.fmText}</span>
-                <button class="btn-del-item" title="Sil" onclick="deleteHistoryItem(${item.id})">✕</button>
+                <span class="history-fm">${escapeHtml(item.fmText)}</span>
+                <button type="button" class="btn-del-item" title="Sil" onclick="deleteHistoryItem(${Number(item.id)})">✕</button>
             </div>
         `;
         container.appendChild(div);
@@ -1226,8 +1412,55 @@ function renderHistory() {
     document.getElementById('grandTotalFm').innerText = `${totalH} saat ${totalM} dk`;
 }
 
+function copyMonthlySummary() {
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
+    } catch (e) {
+        history = [];
+    }
+    let select = document.getElementById('monthFilter');
+    let selectedMonthKey = select.value;
+    let monthLabel = select.selectedIndex >= 0 ? select.options[select.selectedIndex].text : selectedMonthKey;
+
+    let filtered = history.filter(item => {
+        let key = item.monthKey || (item.isoDate ? item.isoDate.substring(0, 7) : "");
+        return key === selectedMonthKey;
+    }).sort((a, b) => (a.isoDate || "").localeCompare(b.isoDate || ""));
+
+    if (filtered.length === 0) {
+        alert("Bu aya ait kopyalanacak mesai kaydı bulunmuyor.");
+        return;
+    }
+
+    let totalMinutes = 0;
+    const workerName = localStorage.getItem("m5_worker_name") || "Personel";
+    let lines = [`📋 *${monthLabel} Fazla Mesai Özeti*`, `👤 ${workerName}`, ""];
+    filtered.forEach(item => {
+        totalMinutes += item.fmMinutes || 0;
+        lines.push(`• ${item.date} (${item.code}) | ${item.inTime}-${item.outTime} ➔ *${item.fmText}*`);
+    });
+    let totalH = Math.floor(totalMinutes / 60);
+    let totalM = totalMinutes % 60;
+    lines.push("", `⏱️ *Toplam: ${totalH} saat ${totalM} dk* (${filtered.length} kayıt)`);
+
+    const summaryText = lines.join("\n");
+    const btn = document.getElementById("btnCopyMonth");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summaryText).then(() => {
+            const orig = btn.innerText;
+            btn.innerText = "✅ Aylık Özet Kopyalandı!";
+            setTimeout(() => { btn.innerText = orig; }, 2200);
+        }).catch(() => {
+            prompt("Aylık özetinizi kopyalayabilirsiniz:", summaryText);
+        });
+    } else {
+        prompt("Aylık özetinizi kopyalayabilirsiniz:", summaryText);
+    }
+}
+
 function deleteHistoryItem(id) {
-    if(!confirm("Bu mesai kaydını silmek istediğinize emin misiniz?")) return;
+    if (!confirm("Bu mesai kaydını silmek istediğinize emin misiniz?")) return;
     let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
     history = history.filter(item => item.id !== id);
     localStorage.setItem("m5_mesai_history", JSON.stringify(history));
@@ -1238,7 +1471,7 @@ function deleteHistoryItem(id) {
 function clearSelectedMonth() {
     let select = document.getElementById('monthFilter');
     let monthLabel = select.options[select.selectedIndex].text;
-    if(!confirm(`${monthLabel} ayına ait tüm kayıtlar silinecek. Emin misiniz?`)) return;
+    if (!confirm(`${monthLabel} ayına ait tüm kayıtlar silinecek. Emin misiniz?`)) return;
 
     let selectedMonthKey = select.value;
     let history = JSON.parse(localStorage.getItem("m5_mesai_history") || "[]");
@@ -1252,8 +1485,8 @@ function clearSelectedMonth() {
     renderHistory();
 }
 
-// PWA Service Worker
-if ('serviceWorker' in navigator) {
+// PWA Service Worker (Sadece HTTP/HTTPS ortamında çalıştır)
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
             .then(reg => console.log('SW OK:', reg.scope))
